@@ -1,0 +1,169 @@
+---
+title: "Mining_PE_list"
+author: "Xianzheng_Su"
+date: "November 18, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##PE
+
+```{r}
+read.csv()
+data_Mining_PE <- data_Mining_ROIC
+data_Mining_PE$list <- NA
+for(i in 1:100){
+  if(!is.na(data_Mining_PE$EU[i])){
+    if(is.na(data_Mining_PE$list[i])){
+      data_Mining_PE$list[i] <- "EU"
+    } else if(data_Mining_PE$Transparent[i] == "Yes"){
+      data_Mining_PE$list[i] <- "TMultiple"
+    } else{
+      data_Mining_PE$list[i] <- "NMultiple"
+    }
+  }
+  if(!is.na(data_Mining_PE$Norway[i])){
+    if(is.na(data_Mining_PE$list[i])){
+      data_Mining_PE$list[i] <- "Norway"
+    } else if(data_Mining_PE$Transparent[i] == "Yes"){
+      data_Mining_PE$list[i] <- "TMultiple"
+    } else{
+      data_Mining_PE$list[i] <- "NMultiple"
+    }
+  }
+  if(!is.na(data_Mining_PE$Toronto[i])){
+    if(is.na(data_Mining_PE$list[i])){
+      data_Mining_PE$list[i] <- "Toronto"
+    } else if(data_Mining_PE$Transparent[i] == "Yes"){
+      data_Mining_PE$list[i] <- "TMultiple"
+    } else{
+      data_Mining_PE$list[i] <- "NMultiple"
+    }
+  }
+  if(!is.na(data_Mining_PE$Australia[i])){
+    if(is.na(data_Mining_PE$list[i])){
+      data_Mining_PE$list[i] <- "Australia"
+    } else if(data_Mining_PE$Transparent[i] == "Yes"){
+      data_Mining_PE$list[i] <- "TMultiple"
+    } else{
+      data_Mining_PE$list[i] <- "NMultiple"
+    }
+  }
+  if(!is.na(data_Mining_PE$South_Africa[i])){
+    if(is.na(data_Mining_PE$list[i])){
+      data_Mining_PE$list[i] <- "South_Africa"
+    } else if(data_Mining_PE$Transparent[i] == "Yes"){
+      data_Mining_PE$list[i] <- "TMultiple"
+    } else{
+      data_Mining_PE$list[i] <- "NMultiple"
+    }
+  }
+  if(!is.na(data_Mining_PE$Hong_Kong[i])){
+    if(is.na(data_Mining_PE$list[i])){
+      data_Mining_PE$list[i] <- "Hong_Kong"
+    } else if(data_Mining_PE$Transparent[i] == "Yes"){
+      data_Mining_PE$list[i] <- "TMultiple"
+    } else{
+      data_Mining_PE$list[i] <- "NMultiple"
+    }
+  }
+  if(!is.na(data_Mining_PE$US[i])){
+    if(is.na(data_Mining_PE$list[i])){
+      data_Mining_PE$list[i] <- "US"
+    } else if(data_Mining_PE$Transparent[i] == "Yes"){
+      data_Mining_PE$list[i] <- "TMultiple"
+    } else{
+      data_Mining_PE$list[i] <- "NMultiple"
+    }
+  }
+  if(!is.na(data_Mining_PE$Accounting_Directive[i])){
+    if(is.na(data_Mining_PE$list[i])){
+      data_Mining_PE$list[i] <- "AD"
+    } else if(data_Mining_PE$Transparent[i] == "Yes"){
+      data_Mining_PE$list[i] <- "TMultiple"
+    } else{
+      data_Mining_PE$list[i] <- "NMultiple"
+    }
+  }
+}
+data_Mining_PE$list[is.na(data_Mining_PE$list)] <- "Not_Listed"
+```
+
+```{r}
+gethic <- ggplot(data= data_Mining_PE, aes(x = list, y = Ethiscore, fill = "#f3c3f7"))
+gethic + geom_boxplot() + ggtitle("Ethiscore by List - Mining") + theme_bw()
+```
+
+```{r}
+d1reform <- data_Mining_PE %>% gather(Year, ROIC, 15:22)
+d1reform$Year <- as.character(d1reform$Year)
+g1 <- ggplot(data = d1reform, aes(x = Year, y = ROIC, colour = Transparent))
+g1 + geom_boxplot() + ylim(c(-25,50)) +theme_bw() + ggtitle("Annual ROIC - Mining")
+```
+
+```{r}
+d1reform <- data_Mining_PE %>% gather(Year, ROIC, 15:22)
+d1reform$Year <- as.character(d1reform$Year)
+g1 <- ggplot(data = d1reform, aes(x = Year, y = ROIC, colour = list))
+g1 + geom_boxplot() + scale_y_continuous(limits = c(-25,50)) + ggtitle("Annual ROIC by list - Mining") + theme_bw()
+```
+
+```{r}
+stopifnot(require(dplyr))
+by_list <- group_by(data_Mining_PE, list, Transparent)
+d1reform<-(PE_summary <- summarise(by_list,
+                         "2010" = mean(`2010`, na.rm = TRUE),
+                         "2011" = mean(`2011`, na.rm = TRUE),
+                         "2012" = mean(`2012`, na.rm = TRUE),
+                         "2013" = mean(`2013`, na.rm = TRUE),
+                         "2014" = mean(`2014`, na.rm = TRUE),
+                         "2015" = mean(`2015`, na.rm = TRUE),
+                         "2016" = mean(`2016`, na.rm = TRUE),
+                         "2017" = mean(`2017`, na.rm = TRUE)))
+d1reform <- as.data.frame(d1reform)
+d1reform <- d1reform %>% gather(Year, ROE, 3:10)
+d1reform$Year <- as.character(d1reform$Year)
+g1 <- ggplot(data = d1reform, aes(x = Year, y = ROE, group = list, colour = Transparent))
+g1 + geom_line() + ggtitle("Annual ROE by Transparent - Mining") + theme_bw() + scale_y_continuous(limits = c(-25,50))
+```
+
+
+```{r}
+by_list <- group_by(data_Mining_PE, list)
+d2reform<-(PE_summary <- summarise(by_list,
+                         "2010" = mean(`2010`, na.rm = TRUE),
+                         "2011" = mean(`2011`, na.rm = TRUE),
+                         "2012" = mean(`2012`, na.rm = TRUE),
+                         "2013" = mean(`2013`, na.rm = TRUE),
+                         "2014" = mean(`2014`, na.rm = TRUE),
+                         "2015" = mean(`2015`, na.rm = TRUE),
+                         "2016" = mean(`2016`, na.rm = TRUE),
+                         "2017" = mean(`2017`, na.rm = TRUE)))
+d2reform <- as.data.frame(d2reform)
+d2reform <- d2reform %>% gather(Year, ROE, 2:9)
+d2reform$Year <- as.character(d2reform$Year)
+g2 <- ggplot(data = d2reform, aes(x = Year, y = ROE, group = list, colour = list))
+g2 + geom_line() + ggtitle("Annual ROE by List - Mining") + theme_bw() + scale_y_continuous(limits = c(-25,50))
+```
+
+
+```{r}
+by_list <- group_by(data_Mining_PE, Transparent)
+d3reform<-(PE_summary <- summarise(by_list,
+                         "2010" = mean(`2010`, na.rm = TRUE),
+                         "2011" = mean(`2011`, na.rm = TRUE),
+                         "2012" = mean(`2012`, na.rm = TRUE),
+                         "2013" = mean(`2013`, na.rm = TRUE),
+                         "2014" = mean(`2014`, na.rm = TRUE),
+                         "2015" = mean(`2015`, na.rm = TRUE),
+                         "2016" = mean(`2016`, na.rm = TRUE),
+                         "2017" = mean(`2017`, na.rm = TRUE)))
+d3reform <- as.data.frame(d3reform)
+d3reform <- d3reform %>% gather(Year, ROE, 2:9)
+d3reform$Year <- as.character(d3reform$Year)
+g2 <- ggplot(data = d3reform, aes(x = Year, y = ROE, group = Transparent, colour = Transparent))
+g2 + geom_line() + ggtitle("Annual ROE - Mining") + theme_bw()
+```
