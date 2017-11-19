@@ -1,0 +1,44 @@
+---
+title: "FDI%GDP"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##
+```{r, message=FALSE, echo=FALSE}
+library(gdata)
+library(ggplot2)
+library(tidyverse)
+library(readxl)
+library(stringr)
+library(plotly)
+library(ggthemes)
+```
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+data <- read.csv('Data/QMSSDataDive_Q2.csv')
+fdi <- names(data)
+FDI <- data[str_detect(fdi, "yrpctgdp_*")]
+subdata <- data[, c(1, 2)]
+subdatagdp <- cbind(subdata, FDI)
+subdatagdp <- t(subdatagdp)
+colnames(subdatagdp) <- subdatagdp[1,]
+subdatagdp <- subdatagdp[c(-1, -2), ]
+Year <- str_extract(rownames(subdatagdp), "[0-9]{4}")
+subdatagdp <- cbind(Year, subdatagdp)
+subdatagdp <- as.data.frame(subdatagdp)
+EIFI <- data[data$EITI == 1, ]
+subdatagdp <- gather(subdatagdp, "Country", "FDI", 2:33)
+subdatagdp$Year <- as.Date(subdatagdp$Year, '%Y')
+subdatagdp$FDI <- as.numeric(as.character(subdatagdp$FDI))
+```
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+gg<- ggplot(subdatagdp) + geom_line(aes(x = Year, y = FDI, color = Country, group = 1)) + theme_bw() + ggtitle("FDI (%GDP)") + ylab('FID (%GDP)')
+ggplotly(gg)
+```
