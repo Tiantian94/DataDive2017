@@ -1,0 +1,33 @@
+---
+title: "dive"
+author: "Yushu Zhou"
+date: "November 17, 2017"
+output: html_document
+---
+
+```{r}
+library(reshape2)
+library(ggplot2)
+library(ggthemes)
+library(grid)
+library(readxl)
+library(dplyr)
+mining <- read.csv('q1_mining.csv')
+oilgas <- read.csv('q1_oilgas.csv')
+
+```
+
+```{r}
+mining_group <- group_by(mining, start) %>%
+  summarize(count = n())
+oilgas_group <- group_by(oilgas, start) %>%
+  summarize(count = n())
+combine_group <- rbind(mining_group, oilgas_group)
+combine_group$class <- c('mining', 'mining', 'mining', 'mining', 'oilgas', 'oilgas', 'oilgas', 'oilgas')
+combine_group$class <- as.factor(combine_group$class)
+```
+
+```{r}
+p1 <- ggplot(combine_group) + geom_bar(aes(x = as.factor(start), y = count, fill=class), stat = "identity", position = 'dodge', width = 0.2)
+p1 + theme_bw() + ggtitle('Distribution of the Number of Companies With Different Compliance Policies') + xlab('start year (0 represents no compliance)') + theme(plot.title = element_text(size = 12, hjust = 0.5))
+```
