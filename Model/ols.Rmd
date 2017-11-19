@@ -1,0 +1,47 @@
+---
+title: "dc"
+author: "Elka Mao"
+date: "11/17/2017"
+output: html_document
+---
+```{r}
+setwd("/Users/elkamao/Desktop")
+```
+
+```{r}
+library(foreign)
+df2 = read.csv("lr_df_yrgdp_.csv")
+df3 = read.csv("lr_df_yrpctgdp_.csv")
+df4 = read.csv("lr_df_cc_rank_.csv")
+df5 <- read.csv('lr_df_roe.csv')
+df6 <- read.csv('lr_df_roic.csv')
+df7 <- read.csv('lr_df_pe.csv')
+df8 <- read.csv('lr_df_roe_oilgas.csv')
+df9 <- read.csv('lr_df_roic_oilgas.csv')
+df10 <- read.csv('lr_df_pe_oilgas.csv')
+df11 <- read.csv('yrgdp_with_q3.csv')
+df12 <- read.csv('QMSSDataDive_Q2_OilReserve.csv')
+```
+
+```{r}
+df2$fd_scale <-  scale(df2$fd, scale = F)
+```
+
+```{r}
+summary(lm(dv ~ year + as.factor(region) + as.factor(EITI) + EITIefficiency + rq + as.factor(resource), data = df2))
+summary(lm(dv ~ year + as.factor(region) + as.factor(EITI) + EITIefficiency + rq + as.factor(resource), data = df3))
+summary(lm(dv ~ year + as.factor(region) + as.factor(EITI) + EITIefficiency + as.factor(resource), data = df4))
+summary(lm(dv ~ Year + as.factor(Transparent) + as.numeric(cap), data = df5))
+summary(lm(dv ~ Year + as.factor(Transparent) + as.numeric(cap), data = df6))
+summary(lm(dv ~ Year + as.factor(Transparent) + as.numeric(cap), data = df7))
+summary(lm(dv ~ Year + as.factor(Transparent) + as.numeric(cap) + as.factor(Season), data = df8))
+summary(lm(dv ~ Year + as.factor(Transparent) + as.numeric(cap) + as.factor(Season), data = df9))
+summary(lm(dv ~ Year + as.factor(Transparent) + as.numeric(cap) + as.factor(Season), data = df10))
+summary(lm(dv ~ year + as.factor(region) + as.factor(EITI) + EITIefficiency, data = df11))
+```
+
+```{r}
+library(plm)
+summary(plm(fd ~ -X, data = df1, index = "X", model = "random"))
+```
+
